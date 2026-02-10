@@ -81,7 +81,7 @@ class Member(models.Model):
             raise ValidationError('No WhatsApp Number')
 
 
-        msg = f"{self.name} നാളെയാണ് നമ്മുടെ കുറിയുടെ ആദ്യ നറുക്ക് . പൈസ നേരെത്തെ എത്തിക്കാൻ ശ്രേമിക്കുക . ആദ്യ ഭാഗ്യവാൻ താങ്കൾ ആവട്ടെ "
+        msg = f"{self.name} നാളെയാണ് നമ്മുടെ കുറിയുടെ ആദ്യ നറുക്ക് ."
         encoded_msg = urllib.parse.quote(msg)
 
         whatsapp_url = (
