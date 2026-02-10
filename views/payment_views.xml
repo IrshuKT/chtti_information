@@ -1,0 +1,51 @@
+<odoo>
+    <record id="view_payment_form" model="ir.ui.view">
+        <field name="name">share_investment.payment.form</field>
+        <field name="model">share_investment.payment</field>
+        <field name="arch" type="xml">
+            <form string="Payment">
+                <header>
+                    <button name="send_message" string="By Msg" class="oe_highlight" type="object"
+                           icon="fa-whatsapp" />
+                </header>
+                <sheet>
+                    <group>
+                        <field name="date"/>
+<field name="payment_month_id" />
+                        <field name="payment_dates"/>
+                        <field name="member_id"/>
+                        <field name="phone"/>
+                        <field name="payment_type"/>
+                        <field name="payment_method"/>
+                        <field name="amount"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+      <record id="view_payment_tree" model="ir.ui.view">
+        <field name="name">share_investment.payment.tree</field>
+        <field name="model">share_investment.payment</field>
+        <field name="arch" type="xml">
+            <tree string="Payment">
+                        <field name="date"/>
+                        <field name="member_id"/>
+                        <field name="payment_type"/>
+                        <field name="payment_method"/>
+                        <field name="payment_month_id"/>
+                        <field name="payment_dates"/>
+                        <field name="amount"/>
+
+            </tree>
+        </field>
+    </record>
+
+    <record model="ir.actions.act_window" id="action_share_payment_form">
+        <field name="name">Payment window</field>
+        <field name="res_model">share_investment.payment</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+        <menuitem id="menu_payments" name="Payments" parent="main_share_investment_menu"
+                  sequence ="20" action="action_share_payment_form"/>
+
+</odoo>

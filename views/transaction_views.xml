@@ -1,0 +1,37 @@
+<odoo>
+<!--    <record id="view_cash_bank_tracking_form" model="ir.ui.view">-->
+<!--        <field name="name">share_investment.cash.bank.tracking.form</field>-->
+<!--        <field name="model">share_investment.cash.bank.tracking</field>-->
+<!--        <field name="arch" type="xml">-->
+<!--            <form string="Cash and Bank Tracking">-->
+<!--                <sheet>-->
+<!--                    <group>-->
+<!--                        <field name="total_cash"/>-->
+<!--                        <field name="total_bank"/>-->
+<!--                    </group>-->
+<!--                </sheet>-->
+<!--            </form>-->
+<!--        </field>-->
+<!--    </record>-->
+    <record id="view_cash_bank_tracking_tree" model="ir.ui.view">
+        <field name="name">share_investment.cash.bank.tracking.tree</field>
+        <field name="model">share_investment.cash.bank.tracking</field>
+        <field name="arch" type="xml">
+            <tree string="Cash and Bank Tracking">
+                <field name="day_now"/>
+                <field name="total_cash"/>
+                <field name="total_bank"/>
+            </tree>
+        </field>
+    </record>
+
+    <record model="ir.actions.act_window" id="action_cash_bank_tracking">
+        <field name="name">Tracking window</field>
+        <field name="res_model">share_investment.cash.bank.tracking</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+    <menuitem id="menu_cash_bank" name="Cash &amp; Bank" parent="main_share_investment_menu"
+              sequence="30"
+              action="action_cash_bank_tracking"/>
+
+</odoo>

@@ -1,0 +1,168 @@
+<odoo>
+    <!--    <record id="view_member_form" model="ir.ui.view">-->
+    <!--        <field name="name">share_investment.member.form</field>-->
+    <!--        <field name="model">share_investment.member</field>-->
+    <!--        <field name="arch" type="xml">-->
+    <!--            <form string="Member">-->
+    <!--                <header>-->
+    <!--                    <button name="action_confirm"-->
+    <!--                            string="Confirm"-->
+    <!--                            type="object"-->
+    <!--                            class="oe_highlight"-->
+    <!--                            attrs="{'invisible': [('status', '!=', 'pending')]}"/>-->
+    <!--                    <button name="action_confirm" string="Confirm" type="object"-->
+    <!--                            class="oe_highlight" attrs="{'invisible': [('status', '!=', 'draft')]}"/>-->
+    <!--                    <button name="action_draft" string="Reset to Draft" type="object"-->
+    <!--                            attrs="{'invisible': [('status', '!=', 'confirmed')]}"/>-->
+    <!--                    <field name="status" widget="statusbar" statusbar_visible="pending,confirmed"/>-->
+    <!--                </header>-->
+    <!--                <sheet>-->
+    <!--                    <group>-->
+    <!--                        <group>-->
+    <!--                            <field name="name"/>-->
+    <!--                            <field name="active"/>-->
+    <!--                            <field name="contact_number"/>-->
+    <!--                        </group>-->
+    <!--                        <group>-->
+    <!--                            <field name="share_count"/>-->
+    <!--                            <field name="has_received_payment"/>-->
+    <!--                        </group>-->
+    <!--                    </group>-->
+    <!--                    <notebook>-->
+    <!--                        <page string="Ledger">-->
+    <!--                            <field name="ledger">-->
+    <!--                                <tree editable="false" delete="false">-->
+    <!--                                    <field name="date"/>-->
+    <!--                                    <field name="payment_method" widget="badge"-->
+    <!--                                           decoration-info="payment_method == 'bank'"/>-->
+
+    <!--                                    <field name="receipt_amount"-->
+    <!--                                           string="Receipts (+)"-->
+    <!--                                           sum="Total Receipts"-->
+    <!--                                           decoration-success="receipt_amount > 0"/>-->
+
+    <!--                                    <field name="payment_amount"-->
+    <!--                                           string="Payments (-)"-->
+    <!--                                           sum="Total Payments"-->
+    <!--                                           decoration-danger="payment_amount > 0"/>-->
+
+    <!--                                    <field name="transaction_type" invisible="1"/>-->
+    <!--                                </tree>-->
+    <!--                            </field>-->
+    <!--                        </page>-->
+
+    <!--                        <page string="Shares">-->
+    <!--                            <field name="shares">-->
+    <!--                                <tree editable="false" decoration-muted="1==1" delete="false">-->
+    <!--                                    <field name="share_number"/>-->
+    <!--                                </tree>-->
+    <!--                            </field>-->
+    <!--                        </page>-->
+    <!--                    </notebook>-->
+    <!--                </sheet>-->
+    <!--                <div class="oe_chatter">-->
+    <!--                    <field name="message_follower_ids"/>-->
+    <!--                    <field name="activity_ids"/>-->
+    <!--                    <field name="message_ids"/>-->
+    <!--                </div>-->
+    <!--            </form>-->
+    <!--        </field>-->
+    <!--    </record>-->
+    <record id="view_member_form" model="ir.ui.view">
+        <field name="name">share_investment.member.form</field>
+        <field name="model">share_investment.member</field>
+        <field name="arch" type="xml">
+            <form string="Member">
+                <header>
+                    <button name="action_confirm" string="Confirm" type="object"
+                            class="oe_highlight" attrs="{'invisible': [('status', '!=', 'draft')]}"/>
+                     <button name="reminder_msg" string="Reminder" type="object"
+                            class="oe_highlight" />
+                     <button name="winner_msg" string="Winner" type="object"
+                            class="oe_highlight" />
+                    <button name="action_draft" string="Set to Draft" type="object"
+                            attrs="{'invisible': [('status', '!=', 'confirmed')]}"/>
+                    <field name="status" widget="statusbar" statusbar_visible="draft,confirmed"/>
+                </header>
+                <sheet>
+                    <group>
+                        <field name="status" invisible="1"/>
+
+                        <group>
+                            <field name="name" attrs="{'readonly': [('status', '=', 'confirmed')]}"/>
+                            <field name="contact_number" attrs="{'readonly': [('status', '=', 'confirmed')]}"/>
+                            <field name="has_received_payment"/>
+                        </group>
+                        <group>
+                            <field name="share_count" attrs="{'readonly': [('status', '=', 'confirmed')]}"/>
+                            <field name="share_numbers_id" widget="many2many_tags"/>
+                            <field name="active" attrs="{'readonly': [('status', '=', 'confirmed')]}"/>
+                        </group>
+                    </group>
+
+                    <notebook>
+
+                        <page string="Ledger">
+                            <field name="ledger" attrs="{'readonly': [('status', '=', 'confirmed')]}">
+                                <tree editable="false" delete="false">
+                                    <field name="date"/>
+<!--                                    <field name="payment_dates"/>-->
+                                    <field name="payment_method" widget="badge"
+                                           decoration-info="payment_method == 'bank'"/>
+
+                                    <field name="receipt_amount"
+                                           string="Receipts (+)"
+                                           sum="Total Receipts"
+                                           decoration-success="receipt_amount > 0"/>
+
+                                    <field name="payment_amount"
+                                           string="Payments (-)"
+                                           sum="Total Payments"
+                                           decoration-danger="payment_amount > 0"/>
+
+                                    <field name="transaction_type" invisible="1"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Shares">
+                            <field name="shares" attrs="{'readonly': [('status', '=', 'confirmed')]}">
+                                <tree editable="bottom">
+                                    <field name="share_number"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+    <record id="view_member_tree" model="ir.ui.view">
+        <field name="name">share_investment.member.tree</field>
+        <field name="model">share_investment.member</field>
+        <field name="arch" type="xml">
+            <tree string="Member">
+                <field name="name"/>
+                <field name="active"/>
+                <field name="contact_number"/>
+                <field name="share_count"/>
+                <field name="share_numbers_id" widget="many2many_tags"/>
+                <field name="has_received_payment" widget="boolean_toggle"/>
+
+            </tree>
+        </field>
+    </record>
+    <record model="ir.actions.act_window" id="action_member_form">
+        <field name="name">Members window</field>
+        <field name="res_model">share_investment.member</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="main_share_investment_menu" name="Share Investment"/>
+    <menuitem id="menu_members" name="Members" parent="main_share_investment_menu" action="action_member_form"/>
+
+
+</odoo>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <template id="custom_header" inherit_id="web.layout">
+        <!-- Places header ABOVE the control panel (below main navbar) -->
+        <xpath expr="//div[hasclass('o_control_panel')]" position="before">
+            <div class="container-fluid bg-white py-2 border-bottom"
+                 style="background: white !important; padding: 10px 15px;">
+                <div class="row align-items-center">
+                    <div class="col-4">
+                        <img t-att-src="'/%s/static/src/img/company_logo.png' % 'your_module'"
+                             style="height: 50px; max-width: 100%;"/>
+                    </div>
+                    <div class="col-8 text-right">
+                        <h2 style="margin: 0; font-size: 1.5rem;">Your Company</h2>
+                        <p style="margin: 3px 0 0; font-size: 0.9rem;">123 Business Street, City</p>
+                    </div>
+                </div>
+            </div>
+        </xpath>
+    </template>
+</odoo>

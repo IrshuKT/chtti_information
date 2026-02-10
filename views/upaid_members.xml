@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <record id="view_unpaid_members_wizard_form" model="ir.ui.view">
+        <field name="name">unpaid.members.wizard.form</field>
+        <field name="model">share_investment.unpaid.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Unpaid Members Reminder">
+                <group>
+                    <field name="payment_month_id"/>
+                    <field name="payment_day"/>
+                </group>
+
+                <footer>
+                    <button
+                            name="action_find_unpaid"
+                            string="View Unpaid Members"
+                            type="object"
+                            class="btn-primary"
+                    />
+
+                    <button
+                            name="action_send_reminder"
+                            string="Send / Next Reminder"
+                            type="object"
+                            class="btn-success"
+                    />
+
+                    <button
+                            name="action_reset_reminders"
+                            string="Reset Reminders"
+                            type="object"
+                            class="btn-warning"
+                    />
+
+                    <button string="Cancel" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+<record id="action_unpaid_members_wizard" model="ir.actions.act_window">
+        <field name="name">Unpaid Members</field>
+        <field name="res_model">share_investment.unpaid.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+    <menuitem id="menu_unpaid_members"
+              name="Unpaid Members"
+              parent="main_share_investment_menu"
+              action="action_unpaid_members_wizard"/>
+
+</odoo>

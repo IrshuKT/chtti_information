@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <record id="view_non_receiving_members_tree" model="ir.ui.view">
+        <field name="name">share_investment.non_receiving_members.tree</field>
+        <field name="model">share_investment.member</field>
+        <field name="arch" type="xml">
+            <tree string="Members Eligible for Payment">
+                <!-- Hide name field but keep it for grouping/sorting -->
+                <field name="name" widget="many2one_clickable" options="{'action': open_member}"/>
+<!--                <field name="name" invisible="0"/>-->
+                <field name="contact_number"/>
+
+                <field name="share_count"   />
+                <field name="has_received_payment" invisible="1"/>
+
+                <!-- Add other relevant fields -->
+            </tree>
+        </field>
+    </record>
+
+    <record model="ir.actions.act_window" id="action_return_eligible_members">
+        <field name="name">Return Payment Eligible Members</field>
+        <field name="res_model">share_investment.member</field>
+         <field name="domain">[('has_received_payment', '=', False)]</field>
+        <field name="view_mode">tree</field>
+
+    </record>
+
+
+    <menuitem
+            id="menu_non_receiving_members"
+            name="Pending Payment"
+            parent="main_share_investment_menu"
+            action="action_return_eligible_members"
+            sequence="60"/>
+</odoo>

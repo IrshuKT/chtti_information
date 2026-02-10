@@ -1,0 +1,62 @@
+<odoo>
+    <data>
+        <!-- Form View for Transfer -->
+        <record id="view_cash_bank_transfer_form" model="ir.ui.view">
+            <field name="name">share_investment.cash.bank.transfer.form</field>
+            <field name="model">share_investment.cash.bank.transfer</field>
+            <field name="arch" type="xml">
+                <form string="Transfer">
+                    <header>
+                        <button name="action_confirm" string="Confirm Transfer" type="object"
+                                class="oe_highlight" attrs="{'invisible': [('status', '!=', 'draft')]}"/>
+                        <button
+                                name="action_reset_to_draft"
+                                type="object"
+                                string="Reset to Draft"
+                                class="btn-secondary"
+                                attrs="{'invisible': [('status', '!=', 'confirmed')]}"/>
+
+                        <field name="status" widget="statusbar" statusbar_visible="draft,confirmed"/>
+                    </header>
+                    <sheet>
+                        <group>
+                            <field name="transfer_type" attrs="{'readonly': [('status', '=', 'confirmed')]}"/>
+                            <field name="transfer_amount" attrs="{'readonly': [('status', '=', 'confirmed')]}"/>
+                            <field name="transfer_date" attrs="{'readonly': [('status', '=', 'confirmed')]}"/>
+                            <field name="currency_id" invisible="1"/>
+                            <field name="remarks"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="view_cash_bank_transfer_tree" model="ir.ui.view">
+            <field name="name">Transferred Data</field>
+            <field name="model">share_investment.cash.bank.transfer</field>
+            <field name="arch" type="xml">
+                <tree string="Cash/Bank Transfer">
+                    <field name="transfer_type"/>
+                    <field name="transfer_amount"/>
+                    <field name="currency_id"/>
+                    <field name="transfer_date"/>
+                </tree>
+            </field>
+        </record>
+        <!-- Action to open the transfer form -->
+        <record id="action_cash_bank_transfer_action" model="ir.actions.act_window">
+            <field name="name">Cash/Bank Transfer</field>
+            <field name="res_model">share_investment.cash.bank.transfer</field>
+            <field name="view_mode">tree,form</field>
+
+        </record>
+
+        <!-- Menu Item for Transfer -->
+        <menuitem id="menu_cash_bank_transfer"
+                  name="Cash/Bank Transfer"
+                  sequence="40"
+                  parent="main_share_investment_menu"
+                  action="action_cash_bank_transfer_action"/>
+
+
+    </data>
+</odoo>

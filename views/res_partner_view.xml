@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+
+    <record id="view_partner_form_inherit" model="ir.ui.view">
+        <field name="name">res.partner.form.inherit</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='function']" position="before">
+
+
+                        <field name="weekly_payment"/>
+
+
+<!--                <page string="Chitti Information">-->
+<!--                    <group>-->
+<!--                        <field name="chitti_number_ids" mode="tree,form">-->
+<!--                            <tree>-->
+<!--                                <field name="number"/>-->
+<!--                                <field name="active"/>-->
+<!--                            </tree>-->
+<!--                            <form>-->
+<!--                                <group>-->
+<!--                                    <field name="number"/>-->
+<!--                                    <field name="active"/>-->
+<!--                                </group>-->
+<!--                            </form>-->
+<!--                        </field>-->
+<!--                    </group>-->
+<!--                </page>-->
+            </xpath>
+        </field>
+    </record>
+    <record id="view_partner_tree_inherit" model="ir.ui.view">
+        <field name="name">res.partner.tree.inherit</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='function']" position="before">
+                <field name="weekly_payment"/>
+                <field name="chitti_number_ids" widget="many2many_tags"/>
+            </xpath>
+        </field>
+    </record>
+
+
+</odoo>

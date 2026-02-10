@@ -1,0 +1,41 @@
+<odoo>
+    <record id="view_member_share_form" model="ir.ui.view">
+        <field name="name">share_investment.share.form</field>
+        <field name="model">share_investment.share</field>
+        <field name="arch" type="xml">
+            <form string="Member">
+                <div class="oe_button_box" name="button_box">
+                    <button name="action_view_payments" type="object" class="oe_stat_button" icon="fa-money">
+                        <field name="payment_count" widget="statinfo" string="Payments"/>
+                    </button>
+                </div>
+                <sheet>
+                    <group>
+                        <field name="member_id"/>
+                        <field name="share_number"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+     <record id="view_member_share_tree" model="ir.ui.view">
+        <field name="name">share_investment.share.tree</field>
+        <field name="model">share_investment.share</field>
+        <field name="arch" type="xml">
+            <tree string="Member">
+                 <field name="member_id"/>
+                <field name="share_number"/>
+            </tree>
+        </field>
+     </record>
+   <record model="ir.actions.act_window" id="action_member_share_form">
+            <field name="name">Members Share</field>
+            <field name="res_model">share_investment.share</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+
+    <menuitem id="menu_share" name="Share" parent="main_share_investment_menu" action="action_member_share_form"/>
+
+
+</odoo>

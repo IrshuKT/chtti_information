@@ -1,0 +1,53 @@
+<odoo>
+  <data>
+    <!-- explicit list view definition -->
+<!--
+    <record model="ir.ui.view" id="chitti_information.list">
+      <field name="name">chitti_information list</field>
+      <field name="model">chitti_information.chitti_information</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="name"/>
+          <field name="value"/>
+          <field name="value2"/>
+        </tree>
+      </field>
+    </record>
+-->
+
+    <!-- actions opening views on models -->
+<!--
+    <record model="ir.actions.act_window" id="chitti_information.action_window">
+      <field name="name">chitti_information window</field>
+      <field name="res_model">chitti_information.chitti_information</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+-->
+
+    <!-- server action to the one above -->
+<!--
+    <record model="ir.actions.server" id="chitti_information.action_server">
+      <field name="name">chitti_information server</field>
+      <field name="model_id" ref="model_chitti_information_chitti_information"/>
+      <field name="state">code</field>
+      <field name="code">
+        action = {
+          "type": "ir.actions.act_window",
+          "view_mode": "tree,form",
+          "res_model": model._name,
+        }
+      </field>
+    </record>
+-->
+
+    <!-- Top menu item -->
+
+    <menuitem id="main_share_investment_menu" name="Share Investment"/>
+<!--    <menuitem id="menu_members" name="Members" parent="main_share_investment_menu" action="action_member_form"/>-->
+<!--    <menuitem id="menu_payments" name="Payments" parent="main_share_investment_menu" action="action_payment_form"/>-->
+<!--    <menuitem id="menu_cash_bank" name="Cash &amp; Bank" parent="main_share_investment_menu" action="action_cash_bank_tracking"/>-->
+
+
+
+  </data>
+</odoo>
