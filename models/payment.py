@@ -58,13 +58,7 @@ class Payment(models.Model):
             rec.create_member_ledger_entry()
         return True
 
-    def unlink(self):
-        for rec in self:
-            # Reverse balance before deleting
-            rec._reverse_old_impact()
-            # Remove ledger
-            self.env['share_investment.ledger'].search([('payment_id', '=', rec.id)]).unlink()
-        return super(Payment, self).unlink()
+
 
     def _reverse_old_impact(self):
         """Helper to undo the current record's financial impact"""
@@ -239,10 +233,7 @@ class Payment(models.Model):
             'url': whatsapp_url
         }
 
-    @api.onchange('date')
-    def _onchange_date_set_month(self):
-        if self.date:
-            self.payment_month = self.date.replace(day=1)
+
 
     @api.onchange('date')
     def _onchange_date_set_month(self):
