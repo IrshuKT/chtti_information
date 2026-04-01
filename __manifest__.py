@@ -19,22 +19,25 @@
     'category': 'finance',
     'version': '0.1',
     'application': True,
-    'license':'LGPL-3',
+    'license': 'LGPL-3',
 
     # any module necessary for this one to work correctly
-    'depends': ['base','web','mail'],
+    'depends': ['base', 'web', 'mail'],
 
     # always loaded
     'data': [
         'security/ir.model.access.csv',
+        'security/security.xml'
+        , 'sequence/voucher_no.xml',
         'views/member_view.xml',
         'views/payment_views.xml',
         'views/transaction_views.xml',
-        #'views/member_share.xml',
+        # 'views/member_share.xml',
         'views/cash_bank_transfer.xml',
         'views/pending_receivers_view.xml',
         'views/upaid_members.xml',
-        #'views/custom_layout.xml'
+
+        # 'views/custom_layout.xml'
 
     ],
     # only loaded in demonstration mode

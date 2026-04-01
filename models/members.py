@@ -76,19 +76,15 @@ class Member(models.Model):
 
     def reminder_msg(self):
         self.ensure_one()
-
         if not self.contact_number:
             raise ValidationError('No WhatsApp Number')
-
-
-        msg = f"{self.name} നാളെയാണ് നമ്മുടെ കുറിയുടെ ആദ്യ നറുക്ക് ."
+        msg = f"{self.name} ഇന്നലത്തെ ഇന്നത്തെയും   അടുത്ത ആഴ്ചയിലെ 10 ലെ ഭാഗ്യവാനും ഷാഫി പി  "
         encoded_msg = urllib.parse.quote(msg)
 
         whatsapp_url = (
                 "https://api.whatsapp.com/send?phone=%s&text=%s"
                 % (self.contact_number, encoded_msg)
         )
-
         return {
             'type': 'ir.actions.act_url',
             'url': whatsapp_url,
@@ -102,7 +98,7 @@ class Member(models.Model):
             raise ValidationError('No WhatsApp Number')
 
 
-        msg = f"{self.name} നമ്മുടെ കുറിയുടെ ആദ്യ ഭാഗ്യവാൻ Naseeba K T "
+        msg = f"{self.name} നമ്മുടെ കുറിയുടെ 2nd ഭാഗ്യവാൻ Naseeba K T "
         encoded_msg = urllib.parse.quote(msg)
 
         whatsapp_url = (
@@ -115,3 +111,43 @@ class Member(models.Model):
             'url': whatsapp_url,
             'target': 'new',
         }
+
+    last_payment_date = fields.Date(
+        string="Last Receipt Date",
+        compute="_compute_last_payment",
+        store=False
+    )
+
+    last_payment_amount = fields.Monetary(
+        string="Last Amount",
+        compute="_compute_last_payment",
+        currency_field='currency_id'
+    )
+
+    last_payment_day = fields.Char(
+        string="Last Payment Day",
+        compute="_compute_last_payment"
+    )
+
+    currency_id = fields.Many2one(
+        'res.currency',
+        default=lambda self: self.env.company.currency_id
+    )
+
+    def _compute_last_payment(self):
+        Payment = self.env['share_investment.payment']
+
+        for member in self:
+            last_payment = Payment.search([
+                ('member_id', '=', member.id),
+                ('payment_type', '=', 'receipt')
+            ], order='date desc', limit=1)
+
+            if last_payment:
+                member.last_payment_date = last_payment.date
+                member.last_payment_amount = last_payment.amount
+                member.last_payment_day = last_payment.payment_dates
+            else:
+                member.last_payment_date = False
+                member.last_payment_amount = 0
+                member.last_payment_day = False

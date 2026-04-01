@@ -31,7 +31,7 @@
         <field name="view_mode">tree,form</field>
     </record>
     <menuitem id="menu_cash_bank" name="Cash &amp; Bank" parent="main_share_investment_menu"
-              sequence="30"
+              sequence="40"
               action="action_cash_bank_tracking"/>
 
 </odoo>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <record id="seq_payment_receipt" model="ir.sequence">
+        <field name="name">Payment Receipt</field>
+        <field name="code">share_investment.payment.receipt</field>
+        <field name="prefix">RCPT/%(year)s/</field>
+        <field name="padding">4</field>
+    </record>
+
+    <record id="seq_payment_return" model="ir.sequence">
+        <field name="name">Payment Return</field>
+        <field name="code">share_investment.payment.return</field>
+        <field name="prefix">RET/%(year)s/</field>
+        <field name="padding">4</field>
+    </record>
+</odoo>

@@ -8,6 +8,7 @@ class ResPartner(models.Model):
 
 
 
+
     weekly_payment = fields.Float(string='Weekly Payment')
     chitti_number_ids = fields.One2many(
         'partner.chitti.number',

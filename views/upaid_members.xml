@@ -45,6 +45,7 @@
     </record>
     <menuitem id="menu_unpaid_members"
               name="Unpaid Members"
+              sequence="30"
               parent="main_share_investment_menu"
               action="action_unpaid_members_wizard"/>
 

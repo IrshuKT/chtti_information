@@ -5,47 +5,129 @@
         <field name="arch" type="xml">
             <form string="Payment">
                 <header>
+                    <button name="action_save"
+                            string="Save"
+                            type="object"
+                            states="draft"
+                            class="btn-primary"/>
+
+                    <button name="action_confirm"
+                            string="Confirm"
+                            type="object"
+                            states="saved"
+                            class="btn-success"
+                            groups="chitti_information.group_payment_manager"/>
+
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,saved,paid"/>
                     <button name="send_message" string="By Msg" class="oe_highlight" type="object"
-                           icon="fa-whatsapp" />
+                            icon="fa-whatsapp"/>
                 </header>
                 <sheet>
                     <group>
-                        <field name="date"/>
-<field name="payment_month_id" />
-                        <field name="payment_dates"/>
-                        <field name="member_id"/>
-                        <field name="phone"/>
-                        <field name="payment_type"/>
-                        <field name="payment_method"/>
-                        <field name="amount"/>
+                        <group>
+                            <field name="name"/>
+                            <field name="date"/>
+                            <field name="member_id"/>
+                            <field name="payment_month_id"/>
+                            <field name="payment_dates"/>
+                        </group>
+                        <group>
+
+                            <field name="phone"/>
+                            <field name="payment_type"/>
+                            <field name="payment_method"/>
+                            <field name="amount"/>
+                        </group>
+
+
                     </group>
                 </sheet>
             </form>
         </field>
     </record>
-      <record id="view_payment_tree" model="ir.ui.view">
+    <record id="view_payment_tree" model="ir.ui.view">
         <field name="name">share_investment.payment.tree</field>
         <field name="model">share_investment.payment</field>
         <field name="arch" type="xml">
             <tree string="Payment">
-                        <field name="date"/>
-                        <field name="member_id"/>
-                        <field name="payment_type"/>
-                        <field name="payment_method"/>
-                        <field name="payment_month_id"/>
-                        <field name="payment_dates"/>
-                        <field name="amount"/>
+                <field name="name"/>
+                <field name="date"/>
+                <field name="member_id"/>
+                <field name="payment_type"/>
+                <field name="payment_month_id"/>
+                <field name="payment_dates"/>
+                <field name="payment_method"/>
+                <field name="signed_amount"/>
+                <field name="state"/>
 
             </tree>
         </field>
     </record>
+    <record id="view_payment_search" model="ir.ui.view">
+        <field name="name">share_investment.payment.search</field>
+        <field name="model">share_investment.payment</field>
+        <field name="arch" type="xml">
+            <search string="Search Payments">
+
+                <!-- Filters -->
+                <filter name="filter_today" string="Today"
+                        domain="[('date','=',context_today())]"/>
+
+                <filter name="filter_month" string="This Month"
+                        domain="[('payment_month_id','=',context_today().strftime('%m'))]"/>
+
+                <separator/>
+
+                <filter name="draft" string="Draft"
+                        domain="[('state','=','draft')]"/>
+
+                <filter name="saved" string="Saved"
+                        domain="[('state','=','saved')]"/>
+
+                <filter name="paid" string="Paid"
+                        domain="[('state','=','paid')]"/>
+
+                <separator/>
+
+                <!-- Group By -->
+                <group expand="0" string="Group By">
+
+                    <filter name="group_member"
+                            string="Member"
+                            context="{'group_by':'member_id'}"/>
+
+                    <filter name="group_month"
+                            string="Month"
+                            context="{'group_by':'payment_month_id'}"/>
+
+                    <filter name="group_day"
+                            string="Payment Day"
+                            context="{'group_by':'payment_dates'}"/>
+
+                    <filter name="group_state"
+                            string="Status"
+                            context="{'group_by':'state'}"/>
+
+                </group>
+
+            </search>
+        </field>
+    </record>
+    <record model="ir.actions.act_window" id="action_share_payment_form">
+        <field name="name">Payment window</field>
+        <field name="res_model">share_investment.payment</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_payment_search"/>
+    </record>
+
 
     <record model="ir.actions.act_window" id="action_share_payment_form">
         <field name="name">Payment window</field>
         <field name="res_model">share_investment.payment</field>
         <field name="view_mode">tree,form</field>
     </record>
-        <menuitem id="menu_payments" name="Payments" parent="main_share_investment_menu"
-                  sequence ="20" action="action_share_payment_form"/>
+    <menuitem id="menu_payments" name="Payments" parent="main_share_investment_menu"
+              sequence="20" action="action_share_payment_form"/>
 
 </odoo>

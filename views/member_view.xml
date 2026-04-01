@@ -79,6 +79,7 @@
                      <button name="reminder_msg" string="Reminder" type="object"
                             class="oe_highlight" />
                      <button name="winner_msg" string="Winner" type="object"
+                            class="oe_highlight" /><button name="send_random_msg" string="ToR" type="object"
                             class="oe_highlight" />
                     <button name="action_draft" string="Set to Draft" type="object"
                             attrs="{'invisible': [('status', '!=', 'confirmed')]}"/>
@@ -161,7 +162,7 @@
         <field name="view_mode">tree,form</field>
     </record>
 
-    <menuitem id="main_share_investment_menu" name="Share Investment"/>
+    <menuitem id="main_share_investment_menu" name="Share Investment" web_icon="chitti_information,static/description/icon.png"/>
     <menuitem id="menu_members" name="Members" parent="main_share_investment_menu" action="action_member_form"/>
 
 

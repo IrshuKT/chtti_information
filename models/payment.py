@@ -1,5 +1,5 @@
 from odoo import models, fields, api,_
-from odoo.exceptions import ValidationError
+from odoo.exceptions import ValidationError, UserError
 
 
 class Payment(models.Model):
@@ -7,6 +7,7 @@ class Payment(models.Model):
     _description = 'Payments to Members'
     _rec_name = 'member_id'
 
+    name = fields.Char(string="Voucher No",required=True,copy=False,readonly=True,default='New')
     member_id = fields.Many2one('share_investment.member', string="Member",required=True)
     phone = fields.Char(
         string="Mobile Number",related='member_id.contact_number',store=True,readonly=True)
@@ -16,8 +17,7 @@ class Payment(models.Model):
     date = fields.Date(string="Receipt Date", default=fields.Date.context_today)
     currency_id = fields.Many2one('res.currency', string="Currency", default=lambda self: self.env.company.currency_id)
     payment_method = fields.Selection([('cash', 'Cash'), ('bank', 'Bank')], string="Receipt Method", required=True,default='cash')
-    # payment_month = fields.Date(string="Payment Month",required=True,
-    #     help="Any date inside the month this payment belongs to")
+    SHARE_AMOUNT = 1000
     payment_month_id = fields.Selection([
         ('01', 'January'),
         ('02', 'February'),
@@ -36,35 +36,72 @@ class Payment(models.Model):
     payment_dates = fields.Selection([
         ('10','10'),('20','20'),('30','30')],string='Payment Day',required=True)
 
+    state = fields.Selection([
+        ('draft', 'Draft'),
+        ('saved', 'Saved'),
+        ('paid', 'Paid')
+    ], default='draft', string="Status", tracking=True)
+
     @api.model
     def create(self, vals):
+        if vals.get('name', 'New') == 'New':
+            if vals.get('payment_type') == 'receipt':
+                vals['name'] = self.env['ir.sequence'].next_by_code(
+                    'share_investment.payment.receipt'
+                ) or 'New'
+            else:
+                vals['name'] = self.env['ir.sequence'].next_by_code(
+                    'share_investment.payment.return'
+                ) or 'New'
+
         payment = super(Payment, self).create(vals)
-        # Update balance and ledger
-        payment.update_cash_bank_balances()
-        payment.create_member_ledger_entry()
+
+        # payment.update_cash_bank_balances()
+        # payment.create_member_ledger_entry()
+
         return payment
 
-    def write(self, vals):
-        # To handle updates: reverse the OLD values, then apply NEW values
+    def action_save(self):
         for rec in self:
-            # 1. Reverse old impact
-            rec._reverse_old_impact()
+            rec.state = 'saved'
 
-            # 2. Update the record
-            super(Payment, rec).write(vals)
+    def action_confirm(self):
+        if not self.env.user.has_group('chitti_information.group_payment_manager'):
+            raise UserError("You are not allowed to confirm payments!")
 
-            # 3. Apply new impact and update ledger
+        for rec in self:
+            if rec.state == 'paid':
+                continue
+
+            # Apply balance impact
             rec._apply_new_balance_impact()
-            rec.create_member_ledger_entry()
-        return True
 
-    def unlink(self):
+            # Create ledger entry
+            rec.create_member_ledger_entry()
+
+            rec.state = 'paid'
+
+    def write(self, vals):
         for rec in self:
-            # Reverse balance before deleting
-            rec._reverse_old_impact()
-            # Remove ledger
-            self.env['share_investment.ledger'].search([('payment_id', '=', rec.id)]).unlink()
-        return super(Payment, self).unlink()
+            if rec.state == 'paid' and not self.env.user.has_group('chitti_information.group_payment_manager'):
+                raise ValidationError("Only manager can modify confirmed entries!")
+        return super().write(vals)
+
+    # def write(self, vals):
+    #     # To handle updates: reverse the OLD values, then apply NEW values
+    #     for rec in self:
+    #         # 1. Reverse old impact
+    #         rec._reverse_old_impact()
+    #
+    #         # 2. Update the record
+    #         super(Payment, rec).write(vals)
+    #
+    #         # 3. Apply new impact and update ledger
+    #         rec._apply_new_balance_impact()
+    #         rec.create_member_ledger_entry()
+    #     return True
+
+
 
     def _reverse_old_impact(self):
         """Helper to undo the current record's financial impact"""
@@ -239,13 +276,83 @@ class Payment(models.Model):
             'url': whatsapp_url
         }
 
-    @api.onchange('date')
-    def _onchange_date_set_month(self):
-        if self.date:
-            self.payment_month = self.date.replace(day=1)
 
     @api.onchange('date')
     def _onchange_date_set_month(self):
         if self.date:
             self.payment_month_id = self.date.strftime('%m')
 
+    _sql_constraints = [ ]
+
+    @api.constrains('member_id', 'amount', 'payment_month_id', 'payment_dates')
+    def _check_member_share_limit(self):
+        for rec in self:
+            if rec.payment_type != 'receipt':
+                continue
+
+            shares = rec.member_id.share_count or 1
+            max_allowed = shares * 1000  # per cycle (10/20/30)
+
+            # Get all existing payments for SAME cycle
+            payments = self.search([
+                ('member_id', '=', rec.member_id.id),
+                ('payment_month_id', '=', rec.payment_month_id),
+                ('payment_dates', '=', rec.payment_dates),
+                ('payment_type', '=', 'receipt'),
+                ('id', '!=', rec.id)
+            ])
+
+            already_paid = sum(payments.mapped('amount'))
+
+            # 🚨 STRICT BLOCK if already full
+            if already_paid >= max_allowed:
+                raise ValidationError(
+                    f"Payment already completed for this cycle!\n"
+                    f"Limit: {max_allowed}"
+                )
+
+            # 🚨 BLOCK if exceeding
+            if already_paid + rec.amount > max_allowed:
+                raise ValidationError(
+                    f"Exceeded limit!\n"
+                    f"Allowed: {max_allowed}\n"
+                    f"Already Paid: {already_paid}\n"
+                    f"Trying: {rec.amount}"
+                )
+
+    signed_amount = fields.Monetary(
+        string="Amount",
+        compute="_compute_signed_amount",
+        store=True,
+        currency_field='currency_id'
+    )
+
+    @api.depends('amount', 'payment_type')
+    def _compute_signed_amount(self):
+        for rec in self:
+            if rec.payment_type == 'receipt':
+                rec.signed_amount = rec.amount
+            else:
+                rec.signed_amount = -rec.amount
+
+    @api.depends('member_id', 'amount', 'payment_month_id', 'payment_dates')
+    def _compute_payment_status(self):
+        for rec in self:
+            shares = rec.member_id.share_count or 1
+            max_allowed = shares * 1000
+
+            payments = self.search([
+                ('member_id', '=', rec.member_id.id),
+                ('payment_month_id', '=', rec.payment_month_id),
+                ('payment_dates', '=', rec.payment_dates),
+                ('payment_type', '=', 'receipt')
+            ])
+
+            total_paid = sum(payments.mapped('amount'))
+
+            if total_paid == 0:
+                rec.payment_status = 'not_paid'
+            elif total_paid < max_allowed:
+                rec.payment_status = 'partial'
+            else:
+                rec.payment_status = 'paid'
